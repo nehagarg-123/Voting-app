@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voting App</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -27,21 +31,22 @@
             padding: 2rem;
             box-sizing: border-box;
         }
-        .poll-card, .candidate-card {
+        .candidate-card {
             background-color: #f9fafb; /* Lighter background for cards */
             border-radius: 0.75rem;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease-in-out;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
-        .poll-card:hover, .candidate-card:hover {
+        .candidate-card:hover {
             transform: translateY(-5px); /* Slight lift on hover */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.07);
         }
-        .option-button {
+        .vote-button {
             transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
         }
-        .option-button:active {
+        .vote-button:active {
             transform: translateY(1px); /* Click effect */
         }
         .vote-count {
@@ -85,16 +90,16 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-8">Voting App</h1>
+        <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-8">Voting Application</h1>
 
         <!-- Message Box for notifications -->
         <div id="message-box" class="message-box"></div>
 
         <!-- Navigation Bar -->
-        <nav class="mb-8 flex justify-center space-x-4">
+        <nav class="mb-8 flex justify-center flex-wrap gap-2">
             <button id="nav-login" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 ease-in-out">Login</button>
             <button id="nav-signup" class="px-4 py-2 rounded-lg font-semibold text-indigo-600 border border-indigo-600 hover:bg-indigo-50 transition duration-150 ease-in-out">Sign Up</button>
-            <button id="nav-dashboard" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 ease-in-out hidden">Dashboard</button>
+            <button id="nav-dashboard" class="px-4 py-2 rounded-lg font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition duration-150 ease-in-out hidden">Vote</button>
             <button id="nav-admin-dashboard" class="px-4 py-2 rounded-lg font-semibold text-white bg-green-600 hover:bg-green-700 transition duration-150 ease-in-out hidden">Admin Dashboard</button>
             <button id="nav-results" class="px-4 py-2 rounded-lg font-semibold text-white bg-purple-600 hover:bg-purple-700 transition duration-150 ease-in-out hidden">Results</button>
             <button id="nav-change-password" class="px-4 py-2 rounded-lg font-semibold text-white bg-yellow-600 hover:bg-yellow-700 transition duration-150 ease-in-out hidden">Change Password</button>
@@ -106,7 +111,7 @@
             <h2 class="text-2xl font-bold text-gray-700 mb-4 text-center">Login</h2>
             <div class="mb-4">
                 <label for="login-aadhar" class="block text-gray-700 text-sm font-medium mb-2">Aadhar Card Number:</label>
-                <input type="text" id="login-aadhar" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="e.g., 123456789012">
+                <input type="text" id="login-aadhar" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="12-digit Aadhar Number">
             </div>
             <div class="mb-6">
                 <label for="login-password" class="block text-gray-700 text-sm font-medium mb-2">Password:</label>
@@ -119,17 +124,35 @@
         <!-- Sign Up Section -->
         <section id="signup-section" class="bg-white p-6 rounded-xl shadow-md mb-8 hidden">
             <h2 class="text-2xl font-bold text-gray-700 mb-4 text-center">Sign Up</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="mb-4">
+                    <label for="signup-name" class="block text-gray-700 text-sm font-medium mb-2">Full Name:</label>
+                    <input type="text" id="signup-name" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="e.g., Jane Doe">
+                </div>
+                 <div class="mb-4">
+                    <label for="signup-age" class="block text-gray-700 text-sm font-medium mb-2">Age:</label>
+                    <input type="number" id="signup-age" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="e.g., 25">
+                </div>
+                <div class="mb-4">
+                    <label for="signup-email" class="block text-gray-700 text-sm font-medium mb-2">Email:</label>
+                    <input type="email" id="signup-email" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="e.g., jane.doe@example.com">
+                </div>
+                <div class="mb-4">
+                    <label for="signup-mobile" class="block text-gray-700 text-sm font-medium mb-2">Mobile Number:</label>
+                    <input type="tel" id="signup-mobile" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="e.g., 9876543210">
+                </div>
+            </div>
+            <div class="mb-4">
+                <label for="signup-address" class="block text-gray-700 text-sm font-medium mb-2">Address:</label>
+                <input type="text" id="signup-address" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Your full address">
+            </div>
             <div class="mb-4">
                 <label for="signup-aadhar" class="block text-gray-700 text-sm font-medium mb-2">Aadhar Card Number:</label>
-                <input type="text" id="signup-aadhar" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="e.g., 123456789012">
+                <input type="text" id="signup-aadhar" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="12-digit Aadhar Number">
             </div>
             <div class="mb-4">
                 <label for="signup-password" class="block text-gray-700 text-sm font-medium mb-2">Password:</label>
                 <input type="password" id="signup-password" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Choose a password">
-            </div>
-            <div class="mb-6">
-                <label for="signup-confirm-password" class="block text-gray-700 text-sm font-medium mb-2">Confirm Password:</label>
-                <input type="password" id="signup-confirm-password" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Confirm your password">
             </div>
             <button id="signup-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 transition duration-150 ease-in-out w-full">Sign Up</button>
             <p class="text-center text-gray-600 text-sm mt-4">Already have an account? <a href="#" id="switch-to-login" class="text-indigo-600 hover:underline">Login</a></p>
@@ -146,44 +169,17 @@
                 <label for="new-password" class="block text-gray-700 text-sm font-medium mb-2">New Password:</label>
                 <input type="password" id="new-password" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Enter new password">
             </div>
-            <div class="mb-6">
-                <label for="confirm-new-password" class="block text-gray-700 text-sm font-medium mb-2">Confirm New Password:</label>
-                <input type="password" id="confirm-new-password" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="Confirm new password">
-            </div>
             <button id="change-password-button" class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-6 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-75 transition duration-150 ease-in-out w-full">Change Password</button>
         </section>
 
-        <!-- User Dashboard Section (Polls and Create Poll) -->
+        <!-- User Dashboard Section (Candidate Voting) -->
         <section id="user-dashboard-section" class="hidden">
-            <!-- Create Poll Section -->
-            <div class="bg-indigo-50 p-6 rounded-xl shadow-md mb-8">
-                <h2 class="text-2xl font-bold text-gray-700 mb-4">Create New Poll</h2>
-                <div class="mb-4">
-                    <label for="new-poll-question" class="block text-gray-700 text-sm font-medium mb-2">Poll Question:</label>
-                    <input type="text" id="new-poll-question" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" placeholder="e.g., What is your favorite color?">
-                </div>
-                <div id="new-poll-options-container" class="mb-4">
-                    <label class="block text-gray-700 text-sm font-medium mb-2">Options:</label>
-                    <div class="flex items-center mb-2">
-                        <input type="text" class="new-poll-option shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent mr-2" placeholder="Option 1">
-                        <button type="button" class="remove-option-button text-red-500 hover:text-red-700 font-bold py-2 px-3 rounded-full text-lg">&times;</button>
-                    </div>
-                    <div class="flex items-center mb-2">
-                        <input type="text" class="new-poll-option shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent mr-2" placeholder="Option 2">
-                        <button type="button" class="remove-option-button text-red-500 hover:text-red-700 font-bold py-2 px-3 rounded-full text-lg">&times;</button>
-                    </div>
-                </div>
-                <button id="add-option-button" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 transition duration-150 ease-in-out mr-2">Add Option</button>
-                <button id="create-poll-button" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 transition duration-150 ease-in-out">Create Poll</button>
-            </div>
-
-            <!-- Polls List Section -->
-            <h2 class="text-3xl font-bold text-gray-800 mb-6">Available Polls</h2>
-            <div id="polls-list" class="grid gap-6">
-                <!-- Polls will be rendered here by JavaScript -->
-                <div class="text-center text-gray-500" id="loading-polls">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Cast Your Vote</h2>
+            <div id="candidates-list-user" class="grid gap-6">
+                <!-- Candidates for voting will be rendered here by JavaScript -->
+                <div class="text-center text-gray-500" id="loading-candidates-user">
                     <div class="loading-spinner mx-auto mb-2"></div>
-                    Loading polls...
+                    Loading candidates...
                 </div>
             </div>
         </section>
@@ -191,21 +187,24 @@
         <!-- Admin Dashboard Section -->
         <section id="admin-dashboard-section" class="hidden">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Admin Dashboard</h2>
-
-            <!-- Add Candidate Section -->
             <div class="bg-green-50 p-6 rounded-xl shadow-md mb-8">
                 <h3 class="text-2xl font-bold text-gray-700 mb-4">Add New Candidate</h3>
                 <div class="mb-4">
                     <label for="new-candidate-name" class="block text-gray-700 text-sm font-medium mb-2">Candidate Name:</label>
                     <input type="text" id="new-candidate-name" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="e.g., John Doe">
                 </div>
+                 <div class="mb-4">
+                    <label for="new-candidate-party" class="block text-gray-700 text-sm font-medium mb-2">Candidate Party:</label>
+                    <input type="text" id="new-candidate-party" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="e.g., Independent">
+                </div>
+                 <div class="mb-4">
+                    <label for="new-candidate-age" class="block text-gray-700 text-sm font-medium mb-2">Candidate Age:</label>
+                    <input type="number" id="new-candidate-age" class="shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="e.g., 45">
+                </div>
                 <button id="add-candidate-button" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75 transition duration-150 ease-in-out">Add Candidate</button>
             </div>
-
-            <!-- Manage Candidates List -->
             <h3 class="text-2xl font-bold text-gray-700 mb-4">Manage Candidates</h3>
             <div id="candidates-list-admin" class="grid gap-4">
-                <!-- Candidates will be rendered here for admin -->
                 <div class="text-center text-gray-500" id="loading-candidates-admin">
                     <div class="loading-spinner mx-auto mb-2"></div>
                     Loading candidates...
@@ -217,7 +216,6 @@
         <section id="results-section" class="hidden">
             <h2 class="text-3xl font-bold text-gray-800 mb-6">Live Vote Counts</h2>
             <div id="results-list" class="grid gap-4">
-                <!-- Candidates and their vote counts will be rendered here -->
                 <div class="text-center text-gray-500" id="loading-results">
                     <div class="loading-spinner mx-auto mb-2"></div>
                     Loading results...
@@ -225,16 +223,38 @@
             </div>
         </section>
 
+        <!-- Custom Modal for Confirmation -->
+        <div id="confirm-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+            <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+                <div class="mt-3 text-center">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Confirm Action</h3>
+                    <div class="mt-2 px-7 py-3">
+                        <p class="text-sm text-gray-500" id="modal-body">Are you sure?</p>
+                    </div>
+                    <div class="items-center px-4 py-3">
+                        <button id="modal-confirm-button" class="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md w-auto shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                            Confirm
+                        </button>
+                        <button id="modal-cancel-button" class="px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md w-auto ml-2 shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // Base URL for  backend API
-        const API_BASE_URL = '';//Add backend api
+        // --- CONFIG ---
+        // IMPORTANT: Replace with your actual backend server URL
+        const API_BASE_URL = 'http://localhost:3000';
 
         // --- UI Elements ---
         const messageBox = document.getElementById('message-box');
+        const allSections = document.querySelectorAll('section');
 
-        // Navigation Buttons
+        // Navigation
         const navLogin = document.getElementById('nav-login');
         const navSignup = document.getElementById('nav-signup');
         const navDashboard = document.getElementById('nav-dashboard');
@@ -251,187 +271,208 @@
         const adminDashboardSection = document.getElementById('admin-dashboard-section');
         const resultsSection = document.getElementById('results-section');
 
-        // Login Elements
+        // Auth Elements
         const loginAadhar = document.getElementById('login-aadhar');
         const loginPassword = document.getElementById('login-password');
         const loginButton = document.getElementById('login-button');
         const switchToSignup = document.getElementById('switch-to-signup');
-
-        // Sign Up Elements
+        const signupName = document.getElementById('signup-name');
+        const signupAge = document.getElementById('signup-age');
+        const signupEmail = document.getElementById('signup-email');
+        const signupMobile = document.getElementById('signup-mobile');
+        const signupAddress = document.getElementById('signup-address');
         const signupAadhar = document.getElementById('signup-aadhar');
         const signupPassword = document.getElementById('signup-password');
-        const signupConfirmPassword = document.getElementById('signup-confirm-password');
         const signupButton = document.getElementById('signup-button');
         const switchToLogin = document.getElementById('switch-to-login');
 
-        // Change Password Elements
+        // Change Password
         const currentPassword = document.getElementById('current-password');
         const newPassword = document.getElementById('new-password');
-        const confirmNewPassword = document.getElementById('confirm-new-password');
         const changePasswordButton = document.getElementById('change-password-button');
 
-        // Poll Creation Elements
-        const newPollQuestionInput = document.getElementById('new-poll-question');
-        const optionsContainer = document.getElementById('new-poll-options-container');
-        const addOptionButton = document.getElementById('add-option-button');
-        const createPollButton = document.getElementById('create-poll-button');
+        // User Dashboard (Voting)
+        const candidatesListUser = document.getElementById('candidates-list-user');
+        const loadingCandidatesUser = document.getElementById('loading-candidates-user');
 
-        // Polls List & Loading
-        const pollsListDiv = document.getElementById('polls-list');
-        const loadingPolls = document.getElementById('loading-polls');
-
-        // Admin Candidate Management Elements
+        // Admin Dashboard
         const newCandidateNameInput = document.getElementById('new-candidate-name');
+        const newCandidatePartyInput = document.getElementById('new-candidate-party');
+        const newCandidateAgeInput = document.getElementById('new-candidate-age');
         const addCandidateButton = document.getElementById('add-candidate-button');
         const candidatesListAdmin = document.getElementById('candidates-list-admin');
         const loadingCandidatesAdmin = document.getElementById('loading-candidates-admin');
 
-        // Results Elements
+        // Results
         const resultsList = document.getElementById('results-list');
         const loadingResults = document.getElementById('loading-results');
+        
+        // Modal
+        const confirmModal = document.getElementById('confirm-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const modalConfirmBtn = document.getElementById('modal-confirm-button');
+        const modalCancelBtn = document.getElementById('modal-cancel-button');
 
-        // --- State Management (Simulated) ---
-        // In a real app, this would be handled by server-side sessions/tokens
-        let currentUser = null; // { aadhar: '...', role: 'user' | 'admin', token: '...' }
-        let userVotes = {}; // { pollId: true } - tracks if a user has voted on a specific poll
+        // --- State Management ---
+        let currentUser = null; // { token: '...', user: { id: '...', role: '...', isVoted: ... } }
 
         // --- Utility Functions ---
-
-        // Function to show a message box
         function showMessageBox(message, type = 'success') {
             messageBox.textContent = message;
-            messageBox.className = 'message-box show'; // Reset classes
-            if (type === 'error') {
-                messageBox.style.backgroundColor = '#dc2626'; // Red for error
-            } else {
-                messageBox.style.backgroundColor = '#4f46e5'; // Indigo for success
-            }
-
-            setTimeout(() => {
-                messageBox.classList.remove('show');
-            }, 3000); // Hide after 3 seconds
+            messageBox.className = 'message-box show';
+            messageBox.style.backgroundColor = type === 'error' ? '#dc2626' : '#4f46e5';
+            setTimeout(() => messageBox.classList.remove('show'), 3000);
         }
 
-        // Function to show a specific section and hide others
         function showSection(sectionToShow) {
-            const allSections = [
-                loginSection, signupSection, changePasswordSection,
-                userDashboardSection, adminDashboardSection, resultsSection
-            ];
             allSections.forEach(section => section.classList.add('hidden'));
-            sectionToShow.classList.remove('hidden');
+            if (sectionToShow) {
+                sectionToShow.classList.remove('hidden');
+            }
+        }
+        
+        function showConfirmationModal(title, body, onConfirm) {
+            modalTitle.textContent = title;
+            modalBody.textContent = body;
+            confirmModal.classList.remove('hidden');
+
+            const newConfirmBtn = modalConfirmBtn.cloneNode(true);
+            modalConfirmBtn.parentNode.replaceChild(newConfirmBtn, modalConfirmBtn);
+            
+            newConfirmBtn.addEventListener('click', () => {
+                onConfirm();
+                confirmModal.classList.add('hidden');
+            });
+            
+            modalCancelBtn.onclick = () => confirmModal.classList.add('hidden');
         }
 
-        // Update Navigation Visibility based on login status and role
         function updateNav() {
             const loggedIn = currentUser !== null;
-            const isAdmin = loggedIn && currentUser.role === 'admin';
+            const isAdmin = loggedIn && currentUser.user.role === 'admin';
 
             navLogin.classList.toggle('hidden', loggedIn);
             navSignup.classList.toggle('hidden', loggedIn);
             navLogout.classList.toggle('hidden', !loggedIn);
             navChangePassword.classList.toggle('hidden', !loggedIn);
             navResults.classList.toggle('hidden', !loggedIn);
-
             navDashboard.classList.toggle('hidden', !loggedIn || isAdmin);
-            navAdminDashboard.classList.toggle('hidden', !loggedIn || !isAdmin);
+            navAdminDashboard.classList.toggle('hidden', !isAdmin);
 
-            // If logged in, show appropriate dashboard
             if (loggedIn) {
                 if (isAdmin) {
                     showSection(adminDashboardSection);
-                    fetchCandidatesAdmin(); // Load candidates for admin
+                    fetchCandidatesAdmin();
                 } else {
                     showSection(userDashboardSection);
-                    fetchPolls(); // Load polls for regular user
+                    fetchCandidatesForUser();
                 }
             } else {
-                showSection(loginSection); // Default to login if not logged in
+                showSection(loginSection);
             }
         }
 
-        // --- Authentication Functions ---
-
-        async function handleLogin() {
-            const aadhar = loginAadhar.value.trim();
-            const password = loginPassword.value.trim();
-
-            if (!aadhar || !password) {
-                showMessageBox('Please enter both Aadhar number and password.', 'error');
-                return;
+        // --- API Call Functions ---
+        async function apiRequest(endpoint, method = 'GET', body = null) {
+            const headers = { 'Content-Type': 'application/json' };
+            if (currentUser && currentUser.token) {
+                headers['Authorization'] = `Bearer ${currentUser.token}`;
             }
+
+            const config = { method, headers };
+            if (body) {
+                config.body = JSON.stringify(body);
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+                if (!response.ok) {
+                    let errorMessage;
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.indexOf("application/json") !== -1) {
+                        const errorData = await response.json();
+                        errorMessage = errorData.error || errorData.message || `Server Error: ${response.status}`;
+                    } else {
+                        errorMessage = `Server responded with ${response.status}: ${response.statusText}. Check API endpoint and server status.`;
+                    }
+                    throw new Error(errorMessage);
+                }
+                if (response.status === 204) return null;
+                return await response.json();
+            } catch (error) {
+                console.error(`API Error on ${method} ${endpoint}:`, error);
+                showMessageBox(error.message, 'error');
+                throw error;
+            }
+        }
+
+        // --- Authentication ---
+        async function handleLogin() {
+            const aadharCardNumber = loginAadhar.value.trim();
+            const password = loginPassword.value.trim();
+            if (!aadharCardNumber || !password) return showMessageBox('Please enter Aadhar and password.', 'error');
 
             loginButton.disabled = true;
             loginButton.textContent = 'Logging in...';
 
             try {
-                // Simulate API call
-                const response = await fetch(`${API_BASE_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ aadharNumber: aadhar, password })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Login failed.');
-                }
-
-                const data = await response.json();
-                currentUser = { aadhar: aadhar, role: data.role, token: data.token }; // Store role and token
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                userVotes = JSON.parse(localStorage.getItem(`userVotes_${currentUser.aadhar}`) || '{}'); // Load user-specific votes
-
+                const data = await apiRequest('/user/login', 'POST', { aadharCardNumber, password });
+                const token = data.token;
+                const profileData = await fetchUserProfile(token);
+                currentUser = { token, user: profileData.user };
+                localStorage.setItem('votingAppUser', JSON.stringify(currentUser));
                 showMessageBox('Login successful!');
-                updateNav(); // Update UI based on new login status and role
+                updateNav();
             } catch (error) {
-                console.error('Login error:', error);
-                showMessageBox(error.message || 'Login failed. Please check your credentials.', 'error');
+                // Error handled by apiRequest
             } finally {
                 loginButton.disabled = false;
                 loginButton.textContent = 'Login';
+                loginAadhar.value = '';
+                loginPassword.value = '';
             }
         }
 
-        async function handleSignup() {
-            const aadhar = signupAadhar.value.trim();
-            const password = signupPassword.value.trim();
-            const confirmPassword = signupConfirmPassword.value.trim();
+        async function fetchUserProfile(token) {
+             const headers = { 'Authorization': `Bearer ${token}` };
+             const response = await fetch(`${API_BASE_URL}/user/profile`, { headers });
+             if(!response.ok) throw new Error('Could not fetch user profile.');
+             return await response.json();
+        }
 
-            if (!aadhar || !password || !confirmPassword) {
-                showMessageBox('Please fill in all fields.', 'error');
-                return;
-            }
-            if (password !== confirmPassword) {
-                showMessageBox('Passwords do not match.', 'error');
-                return;
+        async function handleSignup() {
+            const signupData = {
+                name: signupName.value.trim(),
+                age: signupAge.value.trim(),
+                email: signupEmail.value.trim(),
+                mobile: signupMobile.value.trim(),
+                address: signupAddress.value.trim(),
+                aadharCardNumber: signupAadhar.value.trim(),
+                password: signupPassword.value.trim(),
+                role: 'voter'
+            };
+
+            if (!signupData.name || !signupData.age || !signupData.address || !signupData.aadharCardNumber || !signupData.password) {
+                return showMessageBox('Please fill all required fields: Name, Age, Address, Aadhar, and Password.', 'error');
             }
 
             signupButton.disabled = true;
             signupButton.textContent = 'Signing up...';
 
             try {
-                // Simulate API call
-                const response = await fetch(`${API_BASE_URL}/signup`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ aadharNumber: aadhar, password })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Sign up failed.');
-                }
-
+                await apiRequest('/user/signup', 'POST', signupData);
                 showMessageBox('Sign up successful! Please login.');
-                // Clear form and switch to login
+                showSection(loginSection);
+                signupName.value = '';
+                signupAge.value = '';
+                signupEmail.value = '';
+                signupMobile.value = '';
+                signupAddress.value = '';
                 signupAadhar.value = '';
                 signupPassword.value = '';
-                signupConfirmPassword.value = '';
-                showSection(loginSection);
             } catch (error) {
-                console.error('Sign up error:', error);
-                showMessageBox(error.message || 'Sign up failed. Aadhar number might already be registered.', 'error');
+                 // Error handled by apiRequest
             } finally {
                 signupButton.disabled = false;
                 signupButton.textContent = 'Sign Up';
@@ -439,52 +480,21 @@
         }
 
         async function handleChangePassword() {
-            const oldPassword = currentPassword.value.trim();
+            const currentPass = currentPassword.value.trim();
             const newPass = newPassword.value.trim();
-            const confirmNewPass = confirmNewPassword.value.trim();
-
-            if (!oldPassword || !newPass || !confirmNewPass) {
-                showMessageBox('Please fill in all fields.', 'error');
-                return;
-            }
-            if (newPass !== confirmNewPass) {
-                showMessageBox('New passwords do not match.', 'error');
-                return;
-            }
-            if (newPass === oldPassword) {
-                showMessageBox('New password cannot be the same as the current password.', 'error');
-                return;
-            }
-
+            if (!currentPass || !newPass) return showMessageBox('Please fill all password fields.', 'error');
+            
             changePasswordButton.disabled = true;
             changePasswordButton.textContent = 'Changing...';
 
             try {
-                // Simulate API call
-                const response = await fetch(`${API_BASE_URL}/change-password`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${currentUser.token}` // Send token
-                    },
-                    body: JSON.stringify({ aadharNumber: currentUser.aadhar, oldPassword, newPassword: newPass })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Password change failed.');
-                }
-
+                await apiRequest('/user/profile/password', 'PUT', { currentPassword: currentPass, newPassword: newPass });
                 showMessageBox('Password changed successfully!');
-                // Clear form
                 currentPassword.value = '';
                 newPassword.value = '';
-                confirmNewPassword.value = '';
-                // Redirect to dashboard or login
                 updateNav();
-            } catch (error) {
-                console.error('Password change error:', error);
-                showMessageBox(error.message || 'Failed to change password. Check current password.', 'error');
+            } catch(error){
+                // Error handled by apiRequest
             } finally {
                 changePasswordButton.disabled = false;
                 changePasswordButton.textContent = 'Change Password';
@@ -493,445 +503,225 @@
 
         function handleLogout() {
             currentUser = null;
-            localStorage.removeItem('currentUser');
-            userVotes = {}; // Clear user votes on logout
+            localStorage.removeItem('votingAppUser');
             showMessageBox('Logged out successfully!');
             updateNav();
         }
 
-        // --- Polls Functionality (User Dashboard) ---
-
-        // Function to fetch all polls
-        async function fetchPolls() {
-            loadingPolls.style.display = 'block'; // Show loading
-
+        // --- Candidate & Voting Logic ---
+        async function fetchCandidatesForUser() {
+            loadingCandidatesUser.style.display = 'block';
+            candidatesListUser.innerHTML = '';
             try {
-                const response = await fetch(`${API_BASE_URL}/polls`, {
-                    headers: { 'Authorization': `Bearer ${currentUser.token}` } // Send token
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const polls = await response.json();
-                renderPolls(polls);
+                const candidates = await apiRequest('/candidate');
+                renderCandidatesForUser(candidates);
             } catch (error) {
-                console.error('Error fetching polls:', error);
-                pollsListDiv.innerHTML = '<p class="text-red-600 text-center">Failed to load polls. Please check the backend server or your login status.</p>';
-                showMessageBox('Failed to load polls.', 'error');
+                candidatesListUser.innerHTML = '<p class="text-red-500 text-center">Failed to load candidates.</p>';
             } finally {
-                loadingPolls.style.display = 'none'; // Hide loading
+                loadingCandidatesUser.style.display = 'none';
             }
         }
 
-        // Function to render polls in the UI
-        function renderPolls(polls) {
-            pollsListDiv.innerHTML = ''; // Clear existing polls
-
-            if (polls.length === 0) {
-                pollsListDiv.innerHTML = '<p class="text-gray-500 text-center">No polls available. Create one!</p>';
+        function renderCandidatesForUser(candidates) {
+            candidatesListUser.innerHTML = '';
+            if (!candidates || candidates.length === 0) {
+                candidatesListUser.innerHTML = '<p class="text-gray-500 text-center">No candidates are available for voting.</p>';
                 return;
             }
 
-            polls.forEach(poll => {
-                const pollCard = document.createElement('div');
-                pollCard.className = 'poll-card';
-                pollCard.dataset.pollId = poll.id; // Store poll ID
+            const hasVoted = currentUser.user.isVoted;
+            if(hasVoted) {
+                 candidatesListUser.innerHTML = '<p class="text-green-600 text-center font-semibold text-lg">Thank you! You have already cast your vote.</p>';
+                 return;
+            }
 
-                let optionsHtml = '';
-                const hasVotedOnThisPoll = userVotes[poll.id] === true; // Check if current user has voted on this poll
-
-                if (Array.isArray(poll.options)) {
-                    poll.options.forEach(option => {
-                        const optionId = option.id || crypto.randomUUID();
-                        const optionText = option.text || 'Untitled Option';
-                        const votes = option.votes || 0;
-
-                        // Disable button if user has already voted or if current user is admin
-                        const isDisabled = hasVotedOnThisPoll || (currentUser && currentUser.role === 'admin');
-                        const buttonClasses = isDisabled
-                            ? 'bg-gray-200 text-gray-600 cursor-not-allowed'
-                            : 'bg-indigo-100 hover:bg-indigo-200 text-indigo-800';
-
-                        optionsHtml += `
-                            <div class="flex items-center justify-between mb-3 last:mb-0">
-                                <button
-                                    class="option-button flex-grow font-medium py-2 px-4 rounded-lg text-left focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 transition duration-150 ease-in-out mr-4 ${buttonClasses}"
-                                    data-option-id="${optionId}"
-                                    data-poll-id="${poll.id}"
-                                    ${isDisabled ? 'disabled' : ''}
-                                >
-                                    ${optionText}
-                                </button>
-                                <span class="vote-count text-gray-700">${votes} votes</span>
-                            </div>
-                        `;
-                    });
-                } else {
-                    optionsHtml = '<p class="text-red-500">Invalid poll options data.</p>';
-                }
-
-                pollCard.innerHTML = `
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">${poll.question}</h3>
-                    ${hasVotedOnThisPoll && currentUser.role !== 'admin' ? '<p class="text-sm text-green-600 mb-2 font-medium">You have already voted on this poll.</p>' : ''}
-                    ${currentUser.role === 'admin' ? '<p class="text-sm text-red-600 mb-2 font-medium">Admins cannot vote.</p>' : ''}
+            candidates.forEach(candidate => {
+                const card = document.createElement('div');
+                card.className = 'candidate-card flex items-center justify-between';
+                card.innerHTML = `
                     <div>
-                        ${optionsHtml}
+                        <p class="text-xl font-semibold text-gray-800">${candidate.name}</p>
+                        <p class="text-md text-gray-600">${candidate.party}</p>
                     </div>
+                    <button class="vote-button bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg" data-candidate-id="${candidate._id}">
+                        Vote
+                    </button>
                 `;
-                pollsListDiv.appendChild(pollCard);
+                candidatesListUser.appendChild(card);
             });
 
-            // Add event listeners to vote buttons after rendering
-            document.querySelectorAll('.option-button').forEach(button => {
-                // Only add listener if not disabled by default
-                if (!button.disabled) {
-                    button.addEventListener('click', handleVote);
-                }
+            document.querySelectorAll('.vote-button').forEach(button => {
+                button.addEventListener('click', handleVote);
             });
         }
 
-        // Function to handle voting
         async function handleVote(event) {
             const button = event.target;
-            const pollId = button.dataset.pollId;
-            const optionId = button.dataset.optionId;
-
-            if (!currentUser || currentUser.role === 'admin') {
-                showMessageBox('You must be logged in as a regular user to vote.', 'error');
-                return;
-            }
-            if (userVotes[pollId]) {
-                showMessageBox('You have already voted on this poll.', 'error');
-                return;
-            }
-
-            // Disable button to prevent multiple clicks
-            button.disabled = true;
-            button.textContent = 'Voting...';
-            button.classList.add('opacity-75', 'cursor-not-allowed');
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/polls/${pollId}/vote`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${currentUser.token}` // Send token
-                    },
-                    body: JSON.stringify({ optionId: optionId, userId: currentUser.aadhar }), // Send user ID for backend tracking
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            const candidateId = button.dataset.candidateId;
+            
+            showConfirmationModal(
+                'Confirm Your Vote',
+                `Are you sure you want to vote for this candidate? This action cannot be undone.`,
+                async () => {
+                    button.disabled = true;
+                    button.textContent = 'Voting...';
+                    try {
+                        // ** CRITICAL FIX: Changed method from GET to POST to match backend **
+                        await apiRequest(`/candidate/vote/${candidateId}`, 'POST');
+                        showMessageBox('Vote cast successfully!');
+                        const profileData = await fetchUserProfile(currentUser.token);
+                        currentUser.user = profileData.user;
+                        localStorage.setItem('votingAppUser', JSON.stringify(currentUser));
+                        fetchCandidatesForUser();
+                    } catch (error) {
+                        button.disabled = false;
+                        button.textContent = 'Vote';
+                    }
                 }
-
-                // Mark poll as voted for the current user
-                userVotes[pollId] = true;
-                localStorage.setItem(`userVotes_${currentUser.aadhar}`, JSON.stringify(userVotes));
-
-                showMessageBox('Vote cast successfully!');
-                fetchPolls(); // Re-fetch all polls to update the UI with new counts and disable buttons
-            } catch (error) {
-                console.error('Error casting vote:', error);
-                showMessageBox(error.message || 'Failed to cast vote. Please try again.', 'error');
-            } finally {
-                // Re-enable button and restore text (will be re-rendered by fetchPolls anyway)
-                button.disabled = false;
-                button.textContent = button.textContent.replace('Voting...', '');
-                button.classList.remove('opacity-75', 'cursor-not-allowed');
-            }
+            );
         }
 
-        // Function to add a new option input field for poll creation
-        function addOptionInput() {
-            const optionDiv = document.createElement('div');
-            optionDiv.className = 'flex items-center mb-2';
-            optionDiv.innerHTML = `
-                <input type="text" class="new-poll-option shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent mr-2" placeholder="New Option">
-                <button type="button" class="remove-option-button text-red-500 hover:text-red-700 font-bold py-2 px-3 rounded-full text-lg">&times;</button>
-            `;
-            optionsContainer.appendChild(optionDiv);
-
-            // Add event listener for the new remove button
-            optionDiv.querySelector('.remove-option-button').addEventListener('click', (e) => {
-                e.currentTarget.closest('.flex').remove();
-            });
-        }
-
-        // Function to handle creating a new poll
-        async function handleCreatePoll() {
-            const question = newPollQuestionInput.value.trim();
-            const optionInputs = document.querySelectorAll('.new-poll-option');
-            const options = Array.from(optionInputs)
-                               .map(input => input.value.trim())
-                               .filter(value => value !== ''); // Filter out empty options
-
-            if (!question) {
-                showMessageBox('Please enter a poll question.', 'error');
-                return;
-            }
-            if (options.length < 2) {
-                showMessageBox('Please add at least two options for the poll.', 'error');
-                return;
-            }
-
-            createPollButton.disabled = true;
-            createPollButton.textContent = 'Creating...';
-            createPollButton.classList.add('opacity-75', 'cursor-not-allowed');
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/polls`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${currentUser.token}` // Send token
-                    },
-                    body: JSON.stringify({ question, options }),
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-                }
-
-                showMessageBox('Poll created successfully!');
-                // Clear the form
-                newPollQuestionInput.value = '';
-                // Clear and reset options to two empty inputs
-                optionsContainer.innerHTML = `
-                    <label class="block text-gray-700 text-sm font-medium mb-2">Options:</label>
-                    <div class="flex items-center mb-2">
-                        <input type="text" class="new-poll-option shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent mr-2" placeholder="Option 1">
-                        <button type="button" class="remove-option-button text-red-500 hover:text-red-700 font-bold py-2 px-3 rounded-full text-lg">&times;</button>
-                    </div>
-                    <div class="flex items-center mb-2">
-                        <input type="text" class="new-poll-option shadow-sm appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent mr-2" placeholder="Option 2">
-                        <button type="button" class="remove-option-button text-red-500 hover:text-red-700 font-bold py-2 px-3 rounded-full text-lg">&times;</button>
-                    </div>
-                `;
-                // Re-attach event listeners for the new remove buttons
-                document.querySelectorAll('.remove-option-button').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        e.currentTarget.closest('.flex').remove();
-                    });
-                });
-
-                fetchPolls(); // Refresh polls list
-            } catch (error) {
-                console.error('Error creating poll:', error);
-                showMessageBox(error.message || 'Failed to create poll. Please try again.', 'error');
-            } finally {
-                createPollButton.disabled = false;
-                createPollButton.textContent = 'Create Poll';
-                createPollButton.classList.remove('opacity-75', 'cursor-not-allowed');
-            }
-        }
-
-        // --- Admin Dashboard Functionality ---
-
-        // Function to fetch candidates for admin view
+        // --- Admin Logic ---
         async function fetchCandidatesAdmin() {
             loadingCandidatesAdmin.style.display = 'block';
+            candidatesListAdmin.innerHTML = '';
             try {
-                const response = await fetch(`${API_BASE_URL}/candidates`, {
-                    headers: { 'Authorization': `Bearer ${currentUser.token}` } // Send token
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const candidates = await response.json();
+                const candidates = await apiRequest('/candidate');
                 renderCandidatesAdmin(candidates);
             } catch (error) {
-                console.error('Error fetching candidates for admin:', error);
-                candidatesListAdmin.innerHTML = '<p class="text-red-600 text-center">Failed to load candidates for admin. Check backend or permissions.</p>';
-                showMessageBox('Failed to load candidates for admin.', 'error');
+                candidatesListAdmin.innerHTML = '<p class="text-red-500 text-center">Failed to load candidates.</p>';
             } finally {
                 loadingCandidatesAdmin.style.display = 'none';
             }
         }
 
-        // Function to render candidates in admin view
         function renderCandidatesAdmin(candidates) {
             candidatesListAdmin.innerHTML = '';
-            if (candidates.length === 0) {
+            if (!candidates || candidates.length === 0) {
                 candidatesListAdmin.innerHTML = '<p class="text-gray-500 text-center">No candidates added yet.</p>';
                 return;
             }
-
             candidates.forEach(candidate => {
-                const candidateCard = document.createElement('div');
-                candidateCard.className = 'candidate-card flex items-center justify-between';
-                candidateCard.innerHTML = `
-                    <span class="text-lg font-medium text-gray-800">${candidate.name}</span>
-                    <button class="delete-candidate-button bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-lg shadow-sm transition duration-150 ease-in-out" data-candidate-id="${candidate.id}">Delete</button>
+                const card = document.createElement('div');
+                card.className = 'candidate-card flex items-center justify-between';
+                card.innerHTML = `
+                    <div>
+                        <p class="text-lg font-medium text-gray-800">${candidate.name} (${candidate.age})</p>
+                        <p class="text-sm text-gray-500">${candidate.party}</p>
+                    </div>
+                    <button class="delete-candidate-button bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-lg" data-candidate-id="${candidate._id}">Delete</button>
                 `;
-                candidatesListAdmin.appendChild(candidateCard);
+                candidatesListAdmin.appendChild(card);
             });
-
             document.querySelectorAll('.delete-candidate-button').forEach(button => {
                 button.addEventListener('click', handleDeleteCandidate);
             });
         }
 
-        // Function to handle adding a new candidate
         async function handleAddCandidate() {
-            const candidateName = newCandidateNameInput.value.trim();
-            if (!candidateName) {
-                showMessageBox('Please enter a candidate name.', 'error');
-                return;
-            }
+            const name = newCandidateNameInput.value.trim();
+            const party = newCandidatePartyInput.value.trim();
+            const age = newCandidateAgeInput.value.trim();
+            if (!name || !party || !age) return showMessageBox('Please provide candidate name, party, and age.', 'error');
 
             addCandidateButton.disabled = true;
             addCandidateButton.textContent = 'Adding...';
-
             try {
-                const response = await fetch(`${API_BASE_URL}/candidates`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${currentUser.token}` // Send token
-                    },
-                    body: JSON.stringify({ name: candidateName }),
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-                }
-
+                await apiRequest('/candidate', 'POST', { name, party, age });
                 showMessageBox('Candidate added successfully!');
                 newCandidateNameInput.value = '';
-                fetchCandidatesAdmin(); // Refresh the list
+                newCandidatePartyInput.value = '';
+                newCandidateAgeInput.value = '';
+                fetchCandidatesAdmin();
             } catch (error) {
-                console.error('Error adding candidate:', error);
-                showMessageBox(error.message || 'Failed to add candidate.', 'error');
+                // Error handled by apiRequest
             } finally {
                 addCandidateButton.disabled = false;
                 addCandidateButton.textContent = 'Add Candidate';
             }
         }
 
-        // Function to handle deleting a candidate
         async function handleDeleteCandidate(event) {
-            const button = event.target;
-            const candidateId = button.dataset.candidateId;
-
-            if (!confirm('Are you sure you want to delete this candidate?')) { // Using confirm for simplicity, replace with custom modal in production
-                return;
-            }
-
-            button.disabled = true;
-            button.textContent = 'Deleting...';
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/candidates/${candidateId}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${currentUser.token}` } // Send token
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+            const candidateId = event.target.dataset.candidateId;
+            showConfirmationModal(
+                'Delete Candidate',
+                'Are you sure you want to delete this candidate? This will also remove all their votes.',
+                async () => {
+                    try {
+                        await apiRequest(`/candidate/${candidateId}`, 'DELETE');
+                        showMessageBox('Candidate deleted successfully!');
+                        fetchCandidatesAdmin();
+                    } catch (error) {
+                        // Error handled by apiRequest
+                    }
                 }
-
-                showMessageBox('Candidate deleted successfully!');
-                fetchCandidatesAdmin(); // Refresh the list
-            } catch (error) {
-                console.error('Error deleting candidate:', error);
-                showMessageBox(error.message || 'Failed to delete candidate.', 'error');
-            } finally {
-                button.disabled = false;
-                button.textContent = 'Delete';
-            }
+            );
         }
 
-
-        // --- Results Functionality ---
-
-        // Function to fetch and display live vote counts
+        // --- Results Logic ---
         async function fetchResults() {
             loadingResults.style.display = 'block';
+            resultsList.innerHTML = '';
             try {
-                const response = await fetch(`${API_BASE_URL}/candidates`, {
-                    headers: { 'Authorization': `Bearer ${currentUser.token}` } // Send token
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const candidates = await response.json();
-                renderResults(candidates);
+                const results = await apiRequest('/candidate/vote/count');
+                renderResults(results);
             } catch (error) {
-                console.error('Error fetching results:', error);
-                resultsList.innerHTML = '<p class="text-red-600 text-center">Failed to load results. Please check the backend server.</p>';
-                showMessageBox('Failed to load results.', 'error');
+                resultsList.innerHTML = '<p class="text-red-500 text-center">Failed to load results.</p>';
             } finally {
                 loadingResults.style.display = 'none';
             }
         }
 
-        // Function to render results sorted by vote count
-        function renderResults(candidates) {
+        function renderResults(results) {
             resultsList.innerHTML = '';
-            if (candidates.length === 0) {
-                resultsList.innerHTML = '<p class="text-gray-500 text-center">No candidates to display results for.</p>';
+            if (!results || results.length === 0) {
+                resultsList.innerHTML = '<p class="text-gray-500 text-center">No results to display yet.</p>';
                 return;
             }
-
-            // Sort candidates by vote count in descending order
-            candidates.sort((a, b) => (b.voteCount || 0) - (a.voteCount || 0));
-
-            candidates.forEach(candidate => {
-                const candidateCard = document.createElement('div');
-                candidateCard.className = 'candidate-card flex items-center justify-between';
-                candidateCard.innerHTML = `
-                    <span class="text-lg font-medium text-gray-800">${candidate.name}</span>
-                    <span class="vote-count text-indigo-700 text-xl">${candidate.voteCount || 0} votes</span>
+            results.forEach(result => {
+                const card = document.createElement('div');
+                card.className = 'candidate-card flex items-center justify-between';
+                card.innerHTML = `
+                    <div>
+                        <p class="text-lg font-medium text-gray-800">${result.name || 'N/A'}</p>
+                        <p class="text-sm text-gray-500">${result.party}</p>
+                    </div>
+                    <span class="vote-count text-indigo-700 text-xl">${result.count} votes</span>
                 `;
-                resultsList.appendChild(candidateCard);
+                resultsList.appendChild(card);
             });
         }
 
-
         // --- Event Listeners ---
-
-        // Navigation
-        navLogin.addEventListener('click', () => showSection(loginSection));
-        navSignup.addEventListener('click', () => showSection(signupSection));
-        navDashboard.addEventListener('click', () => { showSection(userDashboardSection); fetchPolls(); });
-        navAdminDashboard.addEventListener('click', () => { showSection(adminDashboardSection); fetchCandidatesAdmin(); });
-        navResults.addEventListener('click', () => { showSection(resultsSection); fetchResults(); });
-        navChangePassword.addEventListener('click', () => showSection(changePasswordSection));
-        navLogout.addEventListener('click', handleLogout);
-
-        // Authentication Forms
-        loginButton.addEventListener('click', handleLogin);
-        signupButton.addEventListener('click', handleSignup);
-        changePasswordButton.addEventListener('click', handleChangePassword);
-
-        // Switch between login/signup forms
-        switchToSignup.addEventListener('click', (e) => { e.preventDefault(); showSection(signupSection); });
-        switchToLogin.addEventListener('click', (e) => { e.preventDefault(); showSection(loginSection); });
-
-        // Poll Creation
-        addOptionButton.addEventListener('click', addOptionInput);
-        createPollButton.addEventListener('click', handleCreatePoll);
-
-        // Initial "Remove Option" buttons (for the two default options)
-        document.querySelectorAll('.remove-option-button').forEach(button => {
-            button.addEventListener('click', (e) => {
-                e.currentTarget.closest('.flex').remove();
-            });
-        });
+        function setupEventListeners() {
+            navLogin.addEventListener('click', () => showSection(loginSection));
+            navSignup.addEventListener('click', () => showSection(signupSection));
+            navDashboard.addEventListener('click', () => { showSection(userDashboardSection); fetchCandidatesForUser(); });
+            navAdminDashboard.addEventListener('click', () => { showSection(adminDashboardSection); fetchCandidatesAdmin(); });
+            navResults.addEventListener('click', () => { showSection(resultsSection); fetchResults(); });
+            navChangePassword.addEventListener('click', () => showSection(changePasswordSection));
+            navLogout.addEventListener('click', handleLogout);
+            loginButton.addEventListener('click', handleLogin);
+            signupButton.addEventListener('click', handleSignup);
+            changePasswordButton.addEventListener('click', handleChangePassword);
+            switchToSignup.addEventListener('click', (e) => { e.preventDefault(); showSection(signupSection); });
+            switchToLogin.addEventListener('click', (e) => { e.preventDefault(); showSection(loginSection); });
+            addCandidateButton.addEventListener('click', handleAddCandidate);
+        }
 
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            // Attempt to load current user from localStorage
-            const storedUser = localStorage.getItem('currentUser');
+            const storedUser = localStorage.getItem('votingAppUser');
             if (storedUser) {
-                currentUser = JSON.parse(storedUser);
-                userVotes = JSON.parse(localStorage.getItem(`userVotes_${currentUser.aadhar}`) || '{}');
+                try {
+                    currentUser = JSON.parse(storedUser);
+                } catch(e) {
+                    console.error("Failed to parse user from localStorage", e);
+                    localStorage.removeItem('votingAppUser');
+                }
             }
-            updateNav(); // Set initial UI state based on login status
+            setupEventListeners();
+            updateNav();
         });
     </script>
 </body>
