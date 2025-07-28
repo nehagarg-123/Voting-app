@@ -1,7 +1,7 @@
 import express from 'express';
 import User from '../models/user.js';
 import { jwtAuthMiddleware } from '../jwt.js';
-import Candidate from '../models/candidate.js';
+import { Candidate } from '../models/candidate.js'; // <--- THIS LINE IS FIXED
 
 const router = express.Router();
 
