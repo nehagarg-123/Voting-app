@@ -1,8 +1,9 @@
-const express = require('express');
+import express from 'express';
+import User from '../models/user.js';
+import { jwtAuthMiddleware } from '../jwt.js';
+import Candidate from '../models/candidate.js';
+
 const router = express.Router();
-const User = require('../models/user');
-const { jwtAuthMiddleware } = require('../jwt');
-const Candidate = require('../models/candidate');
 
 // Helper function to check for admin role
 const checkAdminRole = async (userID) => {
@@ -79,14 +80,13 @@ router.delete('/:candidateID', jwtAuthMiddleware, async (req, res) => {
 });
 
 // GET route for vote count
-
 router.get('/vote/count', async (req, res) => {
     try {
         const candidates = await Candidate.find().sort({ voteCount: 'desc' });
         const voteRecord = candidates.map((data) => {
             return {
                 party: data.party,
-                name: data.name, // Included name for better display on results page
+                name: data.name,
                 count: data.voteCount
             }
         });
@@ -98,7 +98,6 @@ router.get('/vote/count', async (req, res) => {
 });
 
 // POST route for voting
-
 router.post('/vote/:candidateID', jwtAuthMiddleware, async (req, res) => {
     const candidateID = req.params.candidateID;
     const userId = req.user.id;
@@ -137,7 +136,6 @@ router.post('/vote/:candidateID', jwtAuthMiddleware, async (req, res) => {
 // GET List of all candidates
 router.get('/', async (req, res) => {
     try {
-       
         const candidates = await Candidate.find({}, 'name party age');
         res.status(200).json(candidates);
     } catch (err) {
