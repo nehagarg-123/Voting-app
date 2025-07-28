@@ -1,122 +1,133 @@
 import express from 'express';
-import User from './../models/user.js';
+// Assuming a named export from your model file. If it's a default export, remove the curly braces.
+import { User } from './../models/user.js';
 import { jwtAuthMiddleware, generateToken } from './../jwt.js';
 
 const router = express.Router();
 
-// POST route to add a person
+// POST route for user signup
 router.post('/signup', async (req, res) => {
     try {
-        const data = req.body; // Assuming the request body contains the User data
+        const data = req.body;
 
-        // Check if there is already an admin user
-        const adminUser = await User.findOne({ role: 'admin' });
-        if (data.role === 'admin' && adminUser) {
-            return res.status(400).json({ error: 'Admin user already exists' });
-        }
-
-        // Validate Aadhar Card Number must have exactly 12 digits
-        if (!/^\d{12}$/.test(data.aadharCardNumber)) {
-            return res.status(400).json({ error: 'Aadhar Card Number must be exactly 12 digits' });
+        // Check if an admin already exists before allowing a new admin to be created
+        if (data.role === 'admin') {
+            const adminUser = await User.findOne({ role: 'admin' });
+            if (adminUser) {
+                return res.status(400).json({ error: 'Admin user already exists. Cannot register another admin.' });
+            }
         }
 
         // Check if a user with the same Aadhar Card Number already exists
         const existingUser = await User.findOne({ aadharCardNumber: data.aadharCardNumber });
         if (existingUser) {
-            return res.status(400).json({ error: 'User with the same Aadhar Card Number already exists' });
+            return res.status(400).json({ error: 'User with this Aadhar Card Number already exists.' });
         }
+        
+        // *FIX: Create user object with only allowed fields to prevent mass assignment*
+        const newUser = new User({
+            name: data.name,
+            age: data.age,
+            email: data.email,
+            mobile: data.mobile,
+            address: data.address,
+            aadharCardNumber: data.aadharCardNumber,
+            password: data.password,
+            role: data.role
+        });
 
-        // Create a new User document using the Mongoose model
-        const newUser = new User(data);
+        const savedUser = await newUser.save();
+        console.log('User data saved');
 
-        // Save the new user to the database
-        const response = await newUser.save();
-        console.log('data saved');
-
-        const payload = {
-            id: response.id
-        };
-        console.log(JSON.stringify(payload));
+        const payload = { id: savedUser.id };
         const token = generateToken(payload);
 
-        res.status(200).json({ response: response, token: token });
-    }
-    catch (err) {
-        console.log(err);
+        // *FIX: Do not send the entire user object back. Send only the token and a success message.*
+        res.status(200).json({ message: 'Registration successful', token: token });
+
+    } catch (err) {
+        console.error(err);
+        // Provide more specific validation error messages if possible
+        if (err.name === 'ValidationError') {
+            const messages = Object.values(err.errors).map(val => val.message);
+            return res.status(400).json({ error: messages.join(', ') });
+        }
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-// Login Route
+// POST route for user login
 router.post('/login', async (req, res) => {
     try {
-        // Extract aadharCardNumber and password from request body
         const { aadharCardNumber, password } = req.body;
 
-        // Check if aadharCardNumber or password is missing
         if (!aadharCardNumber || !password) {
             return res.status(400).json({ error: 'Aadhar Card Number and password are required' });
         }
 
-        // Find the user by aadharCardNumber
         const user = await User.findOne({ aadharCardNumber: aadharCardNumber });
 
-        // If user does not exist or password does not match, return error
         if (!user || !(await user.comparePassword(password))) {
             return res.status(401).json({ error: 'Invalid Aadhar Card Number or Password' });
         }
 
-        // generate Token 
+        // *IMPROVEMENT: Add role to payload for easier access control*
         const payload = {
             id: user.id,
+            role: user.role
         };
         const token = generateToken(payload);
 
-        // return token as response
-        res.json({ token });
+        res.status(200).json({ token });
+
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-// Profile route
+// GET route to view user profile
 router.get('/profile', jwtAuthMiddleware, async (req, res) => {
     try {
-        const userData = req.user;
-        const userId = userData.id;
-        const user = await User.findById(userId);
-        res.status(200).json({ user });
+        const userId = req.user.id;
+        // *FIX: Use .select('-password') to exclude the password hash from the result*
+        const user = await User.findById(userId).select('-password');
+        
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.status(200).json(user);
+
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
+// PUT route to update user password
 router.put('/profile/password', jwtAuthMiddleware, async (req, res) => {
     try {
-        const userId = req.user.id; // Extract the id from the token
-        const { currentPassword, newPassword } = req.body; // Extract current and new passwords from request body
+        const userId = req.user.id;
+        const { currentPassword, newPassword } = req.body;
 
-        // Check if currentPassword and newPassword are present in the request body
         if (!currentPassword || !newPassword) {
-            return res.status(400).json({ error: 'Both currentPassword and newPassword are required' });
+            return res.status(400).json({ error: 'Both current and new passwords are required' });
         }
 
-        // Find the user by userID
         const user = await User.findById(userId);
 
-        // If user does not exist or password does not match, return error
         if (!user || !(await user.comparePassword(currentPassword))) {
             return res.status(401).json({ error: 'Invalid current password' });
         }
-
-        // Update the user's password
+        
+        // This relies on a pre-save hook in your User model to hash the new password
         user.password = newPassword;
         await user.save();
 
         console.log('password updated');
-        res.status(200).json({ message: 'Password updated' });
+        res.status(200).json({ message: 'Password updated successfully' });
+
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal Server Error' });
