@@ -2,10 +2,14 @@
   "name": "voting-app",
   "version": "1.0.0",
   "description": "mern stack project",
+<<<<<<< HEAD
   "main": "index.js",
   "type": "module",
+=======
+  "main": "server.js",
+>>>>>>> 49f665abc741e6f4998e9e8f5ada82bfe8040af4
   "scripts": {
-     "start": "node index.js",
+     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
