@@ -1,18 +1,56 @@
-import express from 'express';
-import 'dotenv/config'; // Handles environment variables
-import db from './db.js';
-import userRoutes from './routes/userRoutes.js';
-import candidateRoutes from './routes/candidateRoutes.js';
-
+const express = require('express');
 const app = express();
-app.use(express.json()); // Modern way to handle JSON body, replaces body-parser
+require('dotenv').config();
+const cors = require('cors');
+const http = require('http');
+const { Server } = require("socket.io");
+const bodyParser = require('body-parser');
 
-const PORT = process.env.PORT || 5000;
+const db = require('./db'); // MongoDB connection
+const Candidate = require('./models/candidate'); // Only needed for results
 
-// Use the routers
+// Middleware
+app.use(cors({ origin: "http://localhost:5173", methods: ["GET", "POST"] }));
+app.use(bodyParser.json());
+
+// HTTP + Socket.io setup
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: { origin: "http://localhost:5173", methods: ["GET", "POST"] }
+});
+app.set('socketio', io);
+
+io.on('connection', (socket) => {
+    console.log('A user connected via WebSocket');
+});
+
+// Emit latest results periodically
+const emitResults = async () => {
+    try {
+        const candidates = await Candidate.find();
+        const results = {};
+        candidates.forEach(c => {
+            results[c.name] = c.voteCount;
+        });
+        io.emit("update_results", results);
+    } catch (err) {
+        console.error("Error emitting results:", err);
+    }
+};
+
+// Emit chart data every 5 seconds
+setInterval(emitResults, 5000);
+
+// Routes
+const userRoutes = require('./routes/userRoutes');
+const candidateRoutes = require('./routes/candidateRoutes');
+const voteRoutes = require('./routes/voteRoutes');
+
 app.use('/user', userRoutes);
 app.use('/candidate', candidateRoutes);
+app.use('/vote', voteRoutes);
 
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
     console.log(`Listening on port ${PORT}`);
 });
