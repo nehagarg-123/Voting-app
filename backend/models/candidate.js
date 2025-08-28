@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
+// Define the Person schema
 const candidateSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -13,22 +15,24 @@ const candidateSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-   
-    photo: {
+     photo: {
         type: String // This will store a URL to the candidate's image
     },
-    
     votes:[{
         user:{
+            //id that will give the mongoose so i wrote like that
             type:mongoose.Schema.Types.ObjectId,
             ref:'User',
             required: true,
         },
         votedAt:{
             type:Date,
-            default:Date.now
+            default:Date.now()
+
         }
-    }],
+    }
+
+    ],
     voteCount: {
         type: Number,
         default: 0
